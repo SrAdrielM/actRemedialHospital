@@ -1,0 +1,48 @@
+//3- Enviar el correo
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.json({ message: "Error sending email" + error });
+      }
+      console.log("Email sent" + info);
+    });
+
+    res.json({
+      message: "Client registered, Please verify your email with the code sent",
+    });
+  } catch (error) {
+    console.log("error" + error);
+  }
+};
+
+registerClientsController.verifyCodeEmail = async (req, res) => {
+  const { requireCode } = req.body;
+
+  // Obtengo el token guardado en las cookies
+  const token = req.cookies.verificationToken;
+
+  try {
+    // Verificar y decodificar el token
+    const decoded = jsonwebtoken.verify(token, config.JWT.secret);
+    const { email, verificationCode: storedCode } = decoded;
+
+    // Comparar el código que envié por correo y está guardado
+    // en las cookies, con el código que el usuario
+    // está ingresando
+    if (requireCode !== storedCode) {
+      return res.json({ message: "Invalid code" });
+    }
+
+    // Marcamos al cliente como verificado
+    const client = await clientsModel.findOne({ email });
+    client.isVerified = true;
+    await client.save();
+
+    res.clearCookie("verificationToken");
+
+    res.json({ message: "Email verified Successfuly" });
+  } catch (error) {
+    console.log("error" + error);
+  }
+};
+
+export default registerClientsController;
