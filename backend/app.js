@@ -7,6 +7,7 @@ import quotesRouter from "./src/routes/quotes.js"
 
 import loginRoute from "./src/routes/login.js"
 import registerDoctorsRouter from "./src/routes/registerDoctors.js"
+import registerPatientsRouter from "./src/routes/registerPatients.js"
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use("/api/patients", patientsRouter)
 app.use("/api/quotes", quotesRouter)
 app.use("/api/login", loginRoute)
 app.use("/api/registerDoctors", registerDoctorsRouter)
+app.use("/api/registerPatients", registerPatientsRouter)
 
 export default app;
